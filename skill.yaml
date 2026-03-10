@@ -1,6 +1,6 @@
 name: figma-mcp
-version: 1.0.0
-description: Figma MCP 读取技能 - 通过 Figma REST API 读取设计稿颜色、结构、节点信息，支持 URL 自动解析
+version: "1.1.0"
+description: Figma MCP 读取技能 - 通过 Figma REST API 读取设计稿颜色、结构、节点信息、效果、间距、透明度，支持图片导出和 URL 自动解析
 author: 亏贼马
 license: MIT
 repository: https://github.com/crazyma99/figma-mcp-skill
@@ -24,18 +24,26 @@ metadata:
   openclaw:
     emoji: "🎨"
     requires:
-      config: ["skills.entries.figma-mcp.pat"]
+      config: ["skills.entries.figma-mcp.apiKey"]
     primaryEnv: "FIGMA_PERSONAL_ACCESS_TOKEN"
 
 capabilities:
   - name: color_extraction
     description: 提取设计稿中所有颜色（fill、stroke、background）
   - name: structure_reading
-    description: 读取节点树结构和元素详情
+    description: 读取节点树结构和元素详情（含位置、透明度、圆角）
   - name: url_parsing
     description: 自动从 Figma URL 提取 file ID 和 node ID
   - name: environment_check
     description: 检查 Python 版本、curl 可用性、网络连通性、Token 有效性
+  - name: image_export
+    description: 导出节点为 PNG/JPG/SVG/PDF 图片，支持缩放比例
+  - name: effect_extraction
+    description: 提取阴影（DROP_SHADOW/INNER_SHADOW）和模糊（LAYER_BLUR/BACKGROUND_BLUR）
+  - name: opacity_detection
+    description: 识别非完全不透明节点的透明度
+  - name: spacing_detection
+    description: 提取间距信息（gap、padding、auto-layout spacing）
 
 dependencies:
   runtime:
