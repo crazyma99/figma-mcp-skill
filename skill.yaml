@@ -1,0 +1,42 @@
+name: figma-mcp
+version: 1.0.0
+description: Figma MCP 读取技能 - 通过 Figma REST API 读取设计稿颜色、结构、节点信息，支持 URL 自动解析
+author: 亏贼马
+license: MIT
+repository: https://github.com/crazyma99/figma-mcp-skill
+
+requirements:
+  python: ">=3.10"
+  bins: ["curl"]
+
+required_env_vars:
+  - name: FIGMA_PERSONAL_ACCESS_TOKEN
+    description: Figma Personal Access Token（以 figd_ 开头）
+    required: true
+    sensitive: true
+
+optional_env_vars:
+  - name: FIGMA_API_BASE_URL
+    description: Figma API 基础 URL
+    default: "https://api.figma.com/v1"
+
+metadata:
+  openclaw:
+    emoji: "🎨"
+    requires:
+      config: ["skills.entries.figma-mcp.pat"]
+    primaryEnv: "FIGMA_PERSONAL_ACCESS_TOKEN"
+
+capabilities:
+  - name: color_extraction
+    description: 提取设计稿中所有颜色（fill、stroke、background）
+  - name: structure_reading
+    description: 读取节点树结构和元素详情
+  - name: url_parsing
+    description: 自动从 Figma URL 提取 file ID 和 node ID
+  - name: environment_check
+    description: 检查 Python 版本、curl 可用性、网络连通性、Token 有效性
+
+dependencies:
+  runtime:
+    - requests>=2.28.0
