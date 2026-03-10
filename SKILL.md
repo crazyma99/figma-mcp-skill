@@ -34,13 +34,24 @@ metadata:
 
 ### 配置 Token
 
+#### 方式一：让龙虾帮你部署（推荐给 OpenClaw 用户）
+
+如果你正在使用 OpenClaw，直接把下面这句话发给你的龙虾：
+
+> **请按照这个 SKILL.md 帮我完成 figma-mcp-skill 的安装：**
+> **https://github.com/crazyma99/figma-mcp-skill/blob/master/SKILL.md**
+
+龙虾会自动完成：Clone 仓库 → Skill 安装部署 → 提示输入 API Key（Figma PAT）→ 将使用方式发送给你 → 同步提交到远程仓库。
+
+#### 方式二：OpenClaw 技能侧边栏
+
 在 OpenClaw WebUI 的技能侧边栏配置：
 
 | 字段 | 说明 |
 |------|------|
 | **PAT** | Figma Personal Access Token |
 
-或设置环境变量：
+#### 方式三：环境变量
 
 ```bash
 export FIGMA_PERSONAL_ACCESS_TOKEN="figd_xxxxxxxxxxxxx"

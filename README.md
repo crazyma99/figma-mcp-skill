@@ -9,6 +9,10 @@
   - [环境要求](#环境要求)
   - [安装依赖](#安装依赖)
   - [配置 Token](#配置-token)
+  - [方式一：让龙虾帮你部署（推荐）](#方式一让龙虾帮你部署推荐给-openclaw-用户)
+  - [方式二：OpenClaw 技能侧边栏](#方式二openclaw-技能侧边栏推荐手动)
+  - [方式三：环境变量](#方式三环境变量)
+  - [方式四：openclaw.json](#方式四openclawjson)
 - [使用方法](#使用方法)
   - [在 OpenClaw 中使用](#在-openclaw-中使用)
   - [Python 调用](#python-调用)
@@ -67,17 +71,32 @@ pip install requests
 
 ### 配置 Token
 
-#### 方式一：OpenClaw 技能侧边栏（推荐）
+#### 方式一：让龙虾帮你部署（推荐给 OpenClaw 用户）
+
+如果你正在使用 OpenClaw，直接把下面这句话发给你的龙虾：
+
+> **请按照这个 SKILL.md 帮我完成 figma-mcp-skill 的安装：**
+> **https://github.com/crazyma99/figma-mcp-skill/blob/master/SKILL.md**
+
+龙虾会自动完成：
+
+- Clone 仓库
+- Skill 安装部署
+- 提示你把 API Key（Figma PAT）发给它
+- 将使用方式发送给你
+- 修改完成后同步提交到远程仓库
+
+#### 方式二：OpenClaw 技能侧边栏（推荐手动）
 
 在 OpenClaw WebUI 的技能侧边栏找到 `figma-mcp`，输入你的 Figma PAT。
 
-#### 方式二：环境变量
+#### 方式三：环境变量
 
 ```bash
 export FIGMA_PERSONAL_ACCESS_TOKEN="figd_xxxxxxxxxxxxx"
 ```
 
-#### 方式三：openclaw.json
+#### 方式四：openclaw.json
 
 在 `~/.openclaw/openclaw.json` 中添加：
 
