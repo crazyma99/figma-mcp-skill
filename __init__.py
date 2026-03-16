@@ -697,6 +697,163 @@ def get_spacing(url: str, token: Optional[str] = None) -> List[Dict[str, Any]]:
 
 
 # ============================================================================
+# 批量导出 (Batch Export)
+# ============================================================================
+
+def collect_icons(
+    structure: Dict[str, Any],
+    min_width: int = 32,
+    max_width: int = 128,
+    min_height: int = 32,
+    max_height: int = 128,
+    name_contains: Optional[str] = "icon"
+) -> List[Dict[str, Any]]:
+    """
+    从节点结构中收集图标节点
+    
+    Args:
+        structure: 节点结构（来自 get_node_structure）
+        min_width: 最小宽度筛选
+        max_width: 最大宽度筛选
+        min_height: 最小高度筛选
+        max_height: 最大高度筛选
+        name_contains: 名称关键词筛选，None 不筛选
+    
+    Returns:
+        图标节点列表，包含 id node_id name width height path
+    """
+    def _collect(node: Dict[str, Any], path: str = '') -> List[Dict[str, Any]]:
+        icons = []
+        node_name = node.get('name', '').lower()
+        node_width = node.get('width', 0)
+        node_height = node.get('height', 0)
+        current_path = path + '/' + node.get('name', '')
+        
+        # 筛选条件
+        size_ok = (min_width <= node_width <= max_width) and (min_height <= node_height <= max_height)
+        name_ok = (name_contains is None) or (name_contains.lower() in node_name)
+        
+        if size_ok and name_ok:
+            node_id = node['id']
+            icons.append({
+                'id': node_id.replace(':', '-'),
+                'node_id': node_id,
+                'name': node.get('name', f'icon-{node_id}'),
+                'path': current_path,
+                'width': node_width,
+                'height': node_height,
+            })
+        
+        # 递归遍历子节点
+        for child in node.get('children', []):
+            icons.extend(_collect(child, current_path))
+        
+        return icons
+    
+    return _collect(structure)
+
+
+def batch_export_icons(
+    file_id: str,
+    icons: List[Dict[str, Any]],
+    output_dir: str,
+    token: Optional[str] = None,
+    format: str = "png",
+    scale: int = 2
+) -> Dict[str, Any]:
+    """
+    批量导出图标到本地目录
+    
+    Args:
+        file_id: Figma 文件 ID
+        icons: 图标列表（来自 collect_icons）
+        output_dir: 输出目录
+        token: Figma PAT
+        format: 图片格式 png/jpg/svg/pdf
+        scale: 缩放比例
+    
+    Returns:
+        导出结果统计
+    """
+    import urllib.request
+    os.makedirs(output_dir, exist_ok=True)
+    
+    tok = get_token(token)
+    exported = []
+    failed = []
+    
+    for icon in icons:
+        node_id = icon['node_id']
+        icon_id = icon['id']
+        filename = os.path.join(output_dir, f"{icon_id}.{format}")
+        
+        try:
+            result = export_image(file_id, node_id, tok, format=format, scale=scale)
+            if result:
+                for nid, url in result.items():
+                    if url:
+                        urllib.request.urlretrieve(url, filename)
+                        if os.path.exists(filename):
+                            size = os.path.getsize(filename)
+                            exported.append({
+                                **icon,
+                                'path': filename,
+                                'size': size,
+                                'url': url
+                            })
+                        else:
+                            failed.append({**icon, 'error': 'File not saved'})
+                    else:
+                        failed.append({**icon, 'error': 'Empty URL'})
+            else:
+                failed.append({**icon, 'error': 'No result'})
+        except Exception as e:
+            failed.append({**icon, 'error': str(e)})
+    
+    return {
+        'total': len(icons),
+        'exported': len(exported),
+        'failed': len(failed),
+        'exported_list': exported,
+        'failed_list': failed
+    }
+
+
+def collect_and_export_icons(
+    url: str,
+    output_dir: str,
+    token: Optional[str] = None,
+    format: str = "png",
+    scale: int = 2,
+    min_width: int = 32,
+    max_width: int = 128,
+    min_height: int = 32,
+    max_height: int = 128,
+    name_contains: Optional[str] = "icon"
+) -> Dict[str, Any]:
+    """
+    一键收集并批量导出图标
+    
+    Args:
+        url: Figma 设计稿 URL
+        output_dir: 输出目录
+        token: Figma PAT
+        format: 图片格式
+        scale: 缩放比例
+        min/max width/height: 尺寸筛选
+        name_contains: 名称关键词筛选
+    
+    Returns:
+        导出结果统计
+    """
+    structure = get_node_structure(url, token)
+    icons = collect_icons(structure, min_width, max_width, min_height, max_height, name_contains)
+    info = parse_figma_url(url)
+    file_id = info['file_id']
+    return batch_export_icons(file_id, icons, output_dir, token, format, scale)
+
+
+# ============================================================================
 # 模块导出
 # ============================================================================
 
@@ -714,6 +871,10 @@ __all__ = [
     # 图片导出
     "export_image",
     "export_image_from_url",
+    # 批量导出
+    "collect_icons",
+    "batch_export_icons",
+    "collect_and_export_icons",
     # 效果/透明度/间距
     "get_effects",
     "get_opacity",

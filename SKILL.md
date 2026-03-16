@@ -257,6 +257,50 @@ for s in spacings:
 
 验证 Figma Token 有效性，返回用户信息和权限。
 
+### collect_icons(structure, min_width=32, max_width=128, min_height=32, max_height=128, name_contains="icon")
+
+从节点结构中收集图标节点，用于批量导出。
+
+| 参数 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| structure | dict | 必填 | 节点结构（来自 get_node_structure）|
+| min_width | int | 32 | 最小宽度筛选 |
+| max_width | int | 128 | 最大宽度筛选 |
+| min_height | int | 32 | 最小高度筛选 |
+| max_height | int | 128 | 最大高度筛选 |
+| name_contains | str \| None | "icon" | 名称关键词筛选，None 不筛选 |
+
+**返回：** `list[dict]` — 图标节点列表
+
+### batch_export_icons(file_id, icons, output_dir, token=None, format="png", scale=2)
+
+批量导出图标到本地目录。
+
+| 参数 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| file_id | str | 必填 | Figma 文件 ID |
+| icons | list[dict] | 必填 | 图标列表（来自 collect_icons）|
+| output_dir | str | 必填 | 输出目录 |
+| token | str | None | Figma PAT |
+| format | str | "png" | 图片格式 png/jpg/svg/pdf |
+| scale | int | 2 | 缩放比例 |
+
+**返回：** `dict` — 导出结果统计 {total, exported, failed, exported_list, failed_list}
+
+### collect_and_export_icons(url, output_dir, token=None, format="png", scale=2, min_width=32, max_width=128, min_height=32, max_height=128, name_contains="icon")
+
+**一键收集并批量导出图标**，从 Figma URL 直接导出所有图标到本地。
+
+| 参数 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| url | str | 必填 | Figma 设计稿 URL |
+| output_dir | str | 必填 | 输出目录 |
+| token | str | None | Figma PAT |
+| format | str | "png" | 图片格式 |
+| scale | int | 2 | 缩放比例 |
+
+**返回：** 导出结果统计
+
 ## 配置
 
 ### OpenClaw 配置
